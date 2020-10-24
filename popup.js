@@ -1,12 +1,25 @@
 /// for id extraction
 const ID_SEPARATOR = ':';
 const ID_SEPARATOR_INDEX = 3;
-
+let hideClickCounter = 0;
 const filterClass = 'filter-ad';
+const filterIconIdentifier = `filtericonn`;
+const filterSvgClass = 'filterSvg';
 //for filter icon
-const htmlIcon = `<div 
-                        style="position: absolute; right: 46px; top: 7px; z-index: 100; cursor: pointer; " class="${filterClass}" >
-                        <img filterIcon style="height: 20px;" src="https://img.icons8.com/android/24/000000/filter.png" />
+const htmlIcon = `<div class="${filterClass}">
+                        <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" 
+                        style="enable-background:new 0 0 512 512;" xml:space="preserve"
+                        >
+                            <g>
+                                <path d="M276,246c-5.52,0-10,4.48-10,10c0,5.52,4.48,10,10,10c5.52,0,10-4.48,10-10C286,250.48,281.52,246,276,246z"/>
+                            </g>
+                            <g>
+                                <path d="M472,26H40C17.944,26,0,43.944,0,66c0,22.097,17.898,40,40,40h11.194L206,299.508V476c0,3.466,1.795,6.685,4.743,8.506    c2.948,1.823,6.63,1.987,9.729,0.438l80-40C303.86,443.25,306,439.788,306,436V299.508L460.806,106H472c22.056,0,40-17.944,40-40    C512,43.903,494.102,26,472,26z M286,429.82l-60,30V306h60V429.82z M291.193,286h-70.387l-144-180h358.388L291.193,286z M472,86    H40c-11.045,0-20-8.954-20-20c0-11.028,8.972-20,20-20h432c11.045,0,20,8.954,20,20C492,77.028,483.028,86,472,86z"/>
+                            </g>
+                            <g>
+                                <path d="M379.027,128.191c-4.312-3.451-10.606-2.75-14.056,1.562l-71.33,89.16c-3.45,4.313-2.75,10.606,1.562,14.056    c4.304,3.443,10.598,2.76,14.056-1.562l71.33-89.16C384.039,137.934,383.34,131.642,379.027,128.191z"/>
+                            </g>
+                        </svg>
                     </div>`;
 
 window.onload = event => {
@@ -24,7 +37,7 @@ const init = () => {
     setTimeout(() => hideOnLoadOrScroll(), 1500);
 
     setTimeout(() => insertFilter(), 3000);
-
+    addCss();
     window.addEventListener('scroll', () => {
         if (body.scrollHeight > pageHeight) {
             pageHeight = body.scrollHeight;
@@ -33,6 +46,41 @@ const init = () => {
             hideOnLoadOrScroll();
         }
     });
+};
+
+const addCss = () => {
+    document.head.insertAdjacentHTML(
+        'beforeend',
+        `<style>
+            .${filterClass}{
+                border-radius: 50px;
+                position: absolute;
+                right: 46px;
+                top: 4px;
+                z-index: 1;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 3.2rem;
+                width: 3.2rem;
+            }
+        
+            .${filterClass}:hover{
+                background-color: rgb(235,235,235);
+            }
+            .${filterClass}:active{
+                background-color: #D9D9D9;
+            }
+
+
+            .${filterSvgClass}{
+                height: 20px;
+                fill: #797979;
+            }
+            
+            </style>`
+    );
 };
 
 const hidePromotedAds = () => {
@@ -70,7 +118,6 @@ const insertFilter = () => {
             e => {
                 // set event listener on each icon
                 e.preventDefault();
-                console.log('filter was clicked');
                 handleFilterClick(e);
             }
         );
@@ -79,26 +126,43 @@ const insertFilter = () => {
 
 const handleFilterClick = e => {
     // to avoid propagation from other elements
-    if (e.target.hasAttribute('filterIcon')) {
+    if (
+        e.target.hasAttribute(filterIconIdentifier) ||
+        e.target.parentElement.parentElement.hasAttribute(
+            filterIconIdentifier
+        ) || //in case icon inside path was clicked
+        e.target.classList.contains(filterClass)
+    ) {
         e.stopPropagation();
         const parent = getParentEl(e.target);
         const id = getId(parent);
         const isIdOnMemory = isOnMemory(id);
         if (!isOnMemory(id)) {
             hideByParentElement(parent);
+            hideClickCounter++;
         } else {
             unhidePost(id);
+            hideClickCounter--;
         }
 
         saveOrRemoveIdFromMemory(id, isIdOnMemory);
+
+        if (hideClickCounter == 3) {
+            insertFilter();
+            hidePromotedAds();
+            hideClickCounter = 0;
+        }
+    } else {
+        // console.log(`target doesn't have att '${filterIconIdentifier}'`);
+        // console.log(e.target);
     }
 };
 
 const hideByParentElement = el => {
     //el = data-id="urn:li:activity...
     if (el.hasAttribute('data-id')) {
-        const sucess = hideAllChildren(el);
-        if (sucess) {
+        const success = hideAllChildren(el);
+        if (success) {
             el.classList.add('hiddenPost');
         }
     } else {
@@ -117,7 +181,7 @@ const hideAllChildren = el => {
             'Elevation-0dp',
         ];
         secondaryEl = [...el.children]; //data-urn="urn:li:activity:..."
-        console.log(secondaryEl);
+        // console.log(secondaryEl);
         secondaryEl.forEach(child => {
             for (let cls of classesToHide) {
                 // console.log(
@@ -137,20 +201,14 @@ const hideAllChildren = el => {
 
 const getDataUrnEl = el => {
     // because data-urn is immediately loaded
-    if (
-        el.firstElementChild.nextElementSibling &&
-        el.firstElementChild.nextElementSibling.hasAttribute('data-urn')
-    ) {
+    if (el.firstElementChild.nextElementSibling?.hasAttribute('data-urn')) {
         el = el.firstElementChild.nextElementSibling;
     } else if (
-        el.firstElementChild.firstElementChild &&
-        el.firstElementChild.firstElementChild.hasAttribute('data-urn')
+        el.firstElementChild.firstElementChild?.hasAttribute('data-urn')
     ) {
         el = el.firstElementChild.firstElementChild;
     } else if (
-        el.firstElementChild.firstElementChild &&
-        el.firstElementChild.firstElementChild.nextElementSibling &&
-        el.firstElementChild.firstElementChild.nextElementSibling.hasAttribute(
+        el.firstElementChild.firstElementChild?.nextElementSibling?.hasAttribute(
             'data-urn'
         )
     ) {
@@ -159,7 +217,7 @@ const getDataUrnEl = el => {
         // console.log(`didn't found data-urn`);
         return;
     }
-    console.log(el);
+    // console.log(el);
     return el;
 };
 
@@ -179,12 +237,7 @@ const unhidePost = id => {
     secondaryEl = [...el.children]; //data-urn="urn:li:activity:..."
     secondaryEl.forEach(child => {
         for (let cls of classesToUnhide) {
-            // console.log(
-            //     `child class list: ${child.classList}, class checked: ${cls}`
-            // );
-            if (child.classList.contains(cls)) {
-                child.removeAttribute('style');
-            }
+            child.classList.contains(cls) && child.removeAttribute('style');
         }
     });
 };
