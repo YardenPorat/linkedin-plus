@@ -1,12 +1,14 @@
 /// for id extraction
 const ID_SEPARATOR = ':';
 const ID_SEPARATOR_INDEX = 3;
+const ID_SEPARATOR_INDEX_AGGREGATE = 5;
+const RERUN_ON_HIDES = 3;
 let hideClickCounter = 0;
-const filterClass = 'filter-ad';
-const filterIconIdentifier = `filtericonn`;
+const FILTER_CLASS = 'filter-ad';
+const filterIconIdentifier = `filtericonzzz`;
 const filterSvgClass = 'filterSvg';
 //for filter icon
-const htmlIcon = `<div class="${filterClass}">
+const htmlIcon = `<div class="${FILTER_CLASS}">
                         <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" 
                         style="enable-background:new 0 0 512 512;" xml:space="preserve"
                         >
@@ -25,6 +27,7 @@ const htmlIcon = `<div class="${filterClass}">
 window.onload = event => {
     //onload + 2 seconds to construct page
     setTimeout(() => init(), 3000);
+    addCss();
 };
 
 const init = () => {
@@ -35,9 +38,8 @@ const init = () => {
     hidePromotedAds();
     insertFilter();
     setTimeout(() => hideOnLoadOrScroll(), 1500);
-
     setTimeout(() => insertFilter(), 3000);
-    addCss();
+
     window.addEventListener('scroll', () => {
         if (body.scrollHeight > pageHeight) {
             pageHeight = body.scrollHeight;
@@ -52,7 +54,7 @@ const addCss = () => {
     document.head.insertAdjacentHTML(
         'beforeend',
         `<style>
-            .${filterClass}{
+            .${FILTER_CLASS}{
                 border-radius: 50px;
                 position: absolute;
                 right: 46px;
@@ -66,15 +68,16 @@ const addCss = () => {
                 width: 3.2rem;
             }
         
-            .${filterClass}:hover{
+            .${FILTER_CLASS}:hover{
                 background-color: rgb(235,235,235);
             }
-            .${filterClass}:active{
+            .${FILTER_CLASS}:active{
                 background-color: #D9D9D9;
             }
 
 
             .${filterSvgClass}{
+                z-index: 0;
                 height: 20px;
                 fill: #797979;
             }
@@ -100,27 +103,31 @@ const hidePromotedAds = () => {
 };
 
 const insertFilter = () => {
-    optionIcons = [
+    const optionIcons = [
         ...document.querySelectorAll(
             'li-icon[type="ellipsis-horizontal-icon"][aria-label="Open control menu"]:not(.filterAdded)'
         ),
     ];
-    optionIcons.forEach(icon => {
-        icon.classList.add('filterAdded'); //add a class so it won't be re-added to the array
+    optionIcons.forEach(optionIcon => {
+        optionIcon.classList.add('filterAdded'); //add a class so it won't be re-added to the array
 
         //inserted high, in order not to disappear when hiding children
-        icon.parentNode.parentNode.parentNode.parentNode.insertAdjacentHTML(
+        optionIcon.parentNode.parentNode.parentNode.parentNode.insertAdjacentHTML(
             'beforebegin',
             htmlIcon
         ); //insert filter icon
-        icon.parentNode.parentNode.parentNode.parentNode.parentNode.addEventListener(
-            'click',
-            e => {
-                // set event listener on each icon
-                e.preventDefault();
-                handleFilterClick(e);
-            }
-        );
+    });
+
+    const filterIcons = [...document.querySelectorAll(`.${FILTER_CLASS}`)];
+    filterIcons.forEach(filterIcon => {
+        filterIcon.addEventListener('click', e => {
+            // set event listener on each icon
+            console.log(e.target);
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            handleFilterClick(e);
+        });
     });
 };
 
@@ -131,9 +138,8 @@ const handleFilterClick = e => {
         e.target.parentElement.parentElement.hasAttribute(
             filterIconIdentifier
         ) || //in case icon inside path was clicked
-        e.target.classList.contains(filterClass)
+        e.target.classList.contains(FILTER_CLASS)
     ) {
-        e.stopPropagation();
         const parent = getParentEl(e.target);
         const id = getId(parent);
         const isIdOnMemory = isOnMemory(id);
@@ -147,7 +153,7 @@ const handleFilterClick = e => {
 
         saveOrRemoveIdFromMemory(id, isIdOnMemory);
 
-        if (hideClickCounter == 3) {
+        if (hideClickCounter == RERUN_ON_HIDES) {
             insertFilter();
             hidePromotedAds();
             hideClickCounter = 0;
@@ -223,7 +229,8 @@ const getDataUrnEl = el => {
 
 const unhidePost = id => {
     // get main parent element
-    let el = document.querySelector(`[data-id="urn:li:activity:${id}"]`);
+    console.log(id);
+    let el = document.querySelector(`[data-id*="urn:li:activity:${id}"]`);
     el.classList.remove('hiddenPost');
     // unhide children
     el = getDataUrnEl(el);
@@ -246,7 +253,19 @@ const getId = el => {
     //el = data-id="urn:li:activity...
     const idText = el.getAttribute('data-id');
     const position = getPosition(idText, ID_SEPARATOR, ID_SEPARATOR_INDEX);
-    const id = [...idText].slice(position + 1).join('');
+    let id = [...idText].slice(position + 1).join('');
+
+    //check in case data-id id is aggregated
+    if (id[0] == '(') {
+        const position = getPosition(
+            idText,
+            ID_SEPARATOR,
+            ID_SEPARATOR_INDEX_AGGREGATE
+        );
+        id = [...id].slice(position + 1).join('');
+        console.log(`aggregated id: ${id}`);
+    }
+
     return id;
 };
 
