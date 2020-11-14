@@ -7,6 +7,7 @@ let hideClickCounter = 0;
 const FILTER_CLASS = 'filter-ad';
 const filterIconIdentifier = `filtericonzzz`;
 const filterSvgClass = 'filterSvg';
+const LISTENER_ADDED_CLASS = 'listnerAdded';
 //for filter icon
 const htmlIcon = `<div class="${FILTER_CLASS}">
                         <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" 
@@ -104,6 +105,7 @@ const hidePromotedAds = () => {
 };
 
 const insertFilter = () => {
+    // insert filter icon
     const optionIcons = [
         ...document.querySelectorAll(
             'li-icon[type="ellipsis-horizontal-icon"][aria-label="Open control menu"]:not(.filterAdded)'
@@ -116,16 +118,20 @@ const insertFilter = () => {
         optionIcon.parentNode.parentNode.parentNode.parentNode.insertAdjacentHTML(
             'beforebegin',
             htmlIcon
-        ); //insert filter icon
+        );
     });
 
-    const filterIcons = [...document.querySelectorAll(`.${FILTER_CLASS}`)];
+    //insert listener on filter icon
+    const filterIcons = [
+        ...document.querySelectorAll(
+            `.${FILTER_CLASS}:not(.${LISTENER_ADDED_CLASS})`
+        ),
+    ];
     filterIcons.forEach(filterIcon => {
+        filterIcon.classList.add(LISTENER_ADDED_CLASS);
         filterIcon.addEventListener('click', e => {
-            // set event listener on each icon
-
-            console.log(e.target);
-            e.stopImmediatePropagation();
+            // console.log(e.target); //testing
+            e.stopPropagation();
             handleFilterClick(e);
         });
     });
