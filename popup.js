@@ -94,12 +94,13 @@ const hidePromotedAds = () => {
         ),
     ]; // get all the divs in an array
     arr = arr.filter(item => item.innerText == 'Promoted');
-    console.log(`found ${arr.length} promoted posts`);
+
     arr.forEach(promoted => {
         promoted.innerText = 'Hidden by LinkedIn Plus';
         promoted.parentNode.parentNode.parentNode.parentNode.style.display =
             'none';
     });
+    arr.length && console.log(`${arr.length} promoted posts hidden`);
 };
 
 const insertFilter = () => {
@@ -122,9 +123,8 @@ const insertFilter = () => {
     filterIcons.forEach(filterIcon => {
         filterIcon.addEventListener('click', e => {
             // set event listener on each icon
+
             console.log(e.target);
-            e.preventDefault();
-            e.stopPropagation();
             e.stopImmediatePropagation();
             handleFilterClick(e);
         });
@@ -307,7 +307,8 @@ const hideOnLoadOrScroll = () => {
     //read again from memory
     const memory = { filtered: readFromLocalStorage() };
 
-    console.log(`filtering saved posts by id: ${memory.filtered.length} posts`);
+    //testing
+    // console.log(`filtering saved posts by id: ${memory.filtered.length} posts`);
 
     memory.filtered.forEach(id => {
         const el = document.querySelector(
