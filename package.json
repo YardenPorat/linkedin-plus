@@ -1,0 +1,29 @@
+{
+  "name": "linkedin-filter",
+  "version": "1.0.0",
+  "description": "Hide promoted ads.\r Allows post filtering.",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.3",
+    "webpack": "^5.12.2"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.3.1"
+  },
+  "scripts": {
+    "dev": "webpack -w",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yardenporat/linkedin-plus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yardenporat/linkedin-plus/issues"
+  },
+  "homepage": "https://github.com/yardenporat/linkedin-plus#readme"
+}
