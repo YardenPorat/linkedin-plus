@@ -21,10 +21,14 @@ window.onload = () => {
     observeTitle();
 
     if (window.location.href.includes('linkedin.com/feed')) {
-        addCss();
-        waitForSelector(MAIN_FEED_SELECTOR, observeMainFeed);
-        removeStaticAds();
+        init();
     }
+};
+
+const init = () => {
+    addCss();
+    waitForSelector(MAIN_FEED_SELECTOR, observeMainFeed);
+    removeStaticAds();
 };
 
 const observeMainFeed = () => {
@@ -113,8 +117,10 @@ const insertFilter = () => {
         optionIcon.classList.add('filterAdded'); //add a class so it won't be re-added to the array
 
         //inserted high, in order not to disappear when hiding children
-        (optionIcon.parentNode!.parentNode!.parentNode!
-            .parentNode as HTMLElement).insertAdjacentHTML(
+        (
+            optionIcon.parentNode!.parentNode!.parentNode!
+                .parentNode as HTMLElement
+        ).insertAdjacentHTML(
             'beforebegin',
             filterIconHtml(
                 filterMainClass,

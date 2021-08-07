@@ -26,6 +26,13 @@ export const getParentEl = (el: Element) => {
     return el;
 };
 
+export interface IWaitForSelector {
+    selector: string;
+    callback: any;
+    limit: number;
+    delay: number;
+}
+
 export const waitForSelector = (
     selector: string,
     callback: any,

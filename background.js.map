@@ -1,0 +1,1 @@
+{"version":3,"file":"../background.js","mappings":";;;;;;;AAAA;AACA;AACA;AACA;AACA","sources":["webpack://linkedin-filter/./src/background.ts"],"sourcesContent":["chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {\n    if (changeInfo.url) {\n        console.log('updated');\n    }\n});\n"],"names":[],"sourceRoot":""}
