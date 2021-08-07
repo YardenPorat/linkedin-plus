@@ -3,6 +3,11 @@ import { filterIconHtml } from './const';
 import { observeTitle } from './components/observeTitle';
 import { removeStaticAds } from './components/removeStaticAds';
 import { debounce, getParentEl, getPosition, waitForSelector } from './utils';
+import {
+    isOnMemory,
+    readFromLocalStorage,
+    toggleFromStorage,
+} from './local-storage';
 
 /// for id extraction
 export const ID_SEPARATOR = ':';
@@ -166,15 +171,11 @@ const handleFilterClick = (eventTarget: HTMLElement) => {
         eventTarget!.classList.contains(filterMainClass)
     ) {
         const parent = getParentEl(eventTarget) as Element;
-        DEBUG_MODE &&
-            console.log(
-                `Got parent element:
-      ${parent}`
-            );
+        DEBUG_MODE && console.log(`Got parent element: ${parent}`);
         const id = getId(parent);
         const idIndexOnMemory = isOnMemory(id);
 
-        if (idIndexOnMemory === -1) {
+        if (!idIndexOnMemory) {
             DEBUG_MODE && console.log(`Ad ID on memory: NO`);
             hideByParentElement(parent);
         } else {
@@ -182,7 +183,7 @@ const handleFilterClick = (eventTarget: HTMLElement) => {
             unhidePost(id);
         }
 
-        saveOrRemoveIdFromMemory(id, idIndexOnMemory);
+        toggleFromStorage(id);
     } else {
         // console.log(`target doesn't have att '${filterIconIdentifier}'`);
         // console.log(e.target);
@@ -249,52 +250,17 @@ const unhidePost = (id: string) => {
     }
 };
 
-const readFromLocalStorage = () => {
-    // Retrieve your data from locaStorage (get from localStorage or create new Obj)
-    const memoryData = localStorage.getItem('filtered')
-        ? JSON.parse(localStorage.getItem('filtered')!)
-        : [];
-    return [...memoryData];
-};
-
-const isOnMemory = (id: string): number => {
-    const memory = readFromLocalStorage();
-    let index = -1;
-    memory.forEach((ad, i) => {
-        if (ad.id === id) index = i;
-    });
-    return index;
-};
-
-const saveOrRemoveIdFromMemory = (
-    id: string,
-    idIndexOnMemory: number
-): void => {
-    const memory = { filtered: readFromLocalStorage() };
-
-    if (id != null) {
-        if (idIndexOnMemory === -1) {
-            memory.filtered.push({ id: id, date: Date.now() });
-            console.log(`'${id}' ADDED`);
-        } else {
-            memory.filtered.splice(idIndexOnMemory, 1);
-            console.log(`'${id}' REMOVED`);
-        }
-    }
-    localStorage.setItem('filtered', JSON.stringify(memory.filtered));
-};
-
 // Hide on first load id's from localStorage
 const hideOnLoadOrScroll = () => {
     //read again from memory
-    const memory = { filtered: readFromLocalStorage() };
+    const storage = readFromLocalStorage();
+
+    const adsIds = Object.keys(storage);
 
     DEBUG_MODE &&
-        console.log(
-            `filtering saved posts by id: ${memory.filtered.length} posts`
-        );
+        console.log(`Filtering saved posts by id: ${adsIds.length} posts`);
 
-    memory.filtered.forEach(({ id }) => {
+    for (const id of adsIds) {
         const el = document.querySelector(
             // :not(.hiddenPost) - in order not to double hide posts
             `[data-id="urn:li:activity:${id}"]:not(.hiddenPost)`
@@ -303,7 +269,7 @@ const hideOnLoadOrScroll = () => {
             console.log(`ID found. hiding ID:${id}`);
             hideByParentElement(el);
         }
-    });
+    }
 };
 
 const getId = (el: Element) => {
