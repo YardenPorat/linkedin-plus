@@ -42,6 +42,7 @@ const init = () => {
     addCss();
     waitForSelector(MAIN_FEED_SELECTOR, observeMainFeed);
     removeStaticAds();
+    processNewPosts();
 };
 
 const observeMainFeed = () => {
