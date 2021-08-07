@@ -21,9 +21,17 @@ window.onload = () => {
     observeTitle();
 
     if (window.location.href.includes('linkedin.com/feed')) {
+        console.log('First entry to feed');
         init();
     }
 };
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.message === 'enteredFeed') {
+        console.log('Enter feed from another section in linkedIn');
+        init();
+    }
+});
 
 const init = () => {
     addCss();

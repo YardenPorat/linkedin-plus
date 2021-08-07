@@ -49,11 +49,12 @@ var removeStaticAds = function () {
     var selectors = [
         'section.ad-banner-container.is-header-zone',
         'section.ad-banner-container.artdeco-card',
+        'div > div > aside > div.scaffold-layout__sticky.scaffold-layout__sticky--is-active.scaffold-layout__sticky--lg > div > section > iframe',
     ];
     var _loop_1 = function (selector) {
         (0,_utils__WEBPACK_IMPORTED_MODULE_0__.waitForSelector)(selector, function () {
             var element = document.querySelector(selector);
-            element.style.visibility = 'hidden';
+            element.style.display = 'none';
         }, 10, 1000);
     };
     for (var _i = 0, selectors_1 = selectors; _i < selectors_1.length; _i++) {
@@ -84,6 +85,7 @@ var classesToHide = [
     '.social-details-social-activity',
     '.Elevation-0dp',
     '.ad-banner-container',
+    '.feed-shared-document__container',
 ];
 
 
@@ -247,9 +249,16 @@ var DEBUG_MODE = false;
 window.onload = function () {
     (0,_components_observeTitle__WEBPACK_IMPORTED_MODULE_1__.observeTitle)();
     if (window.location.href.includes('linkedin.com/feed')) {
+        console.log('First entry to feed');
         init();
     }
 };
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.message === 'enteredFeed') {
+        console.log('Enter feed from another section in linkedIn');
+        init();
+    }
+});
 var init = function () {
     addCss();
     (0,_utils__WEBPACK_IMPORTED_MODULE_3__.waitForSelector)(MAIN_FEED_SELECTOR, observeMainFeed);

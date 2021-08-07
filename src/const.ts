@@ -25,4 +25,5 @@ export const classesToHide = [
     '.social-details-social-activity',
     '.Elevation-0dp',
     '.ad-banner-container',
+    '.feed-shared-document__container',
 ];
