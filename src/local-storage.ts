@@ -1,21 +1,24 @@
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
 
 export const readFromLocalStorage = () => {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) ?? '{}');
+    return new Set<string>(
+        JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) ?? '[]')
+    );
 };
 
-export const isOnMemory = (id: string): boolean => {
-    return !!(id in readFromLocalStorage());
-};
-
-export const toggleFromStorage = (id: string): void => {
+export const toggleFromStorage = (id: string) => {
     const storage = readFromLocalStorage();
-    if (!isOnMemory(id)) {
-        storage[id] = 1;
+
+    if (!storage.has(id)) {
+        storage.add(id);
         console.log(`'${id}' Added`);
     } else {
-        delete storage[id];
+        storage.delete(id);
         console.log(`'${id}' Removed`);
     }
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storage));
+
+    localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify(Array.from(storage))
+    );
 };
