@@ -1,4 +1,10 @@
-import { classesToHide, filterIconHtml } from './const';
+import {
+    classesToHide,
+    filterIconHtml,
+    filterIconIdentifier,
+    filterMainClass,
+    filterSvgClass,
+} from './const';
 import { observeTitle } from './components/observeTitle';
 import { removeStaticAds } from './components/removeStaticAds';
 import { debounce, getParentEl, getPosition, waitForSelector } from './utils';
@@ -8,13 +14,9 @@ import { readFromLocalStorage, toggleFromStorage } from './local-storage';
 const ID_SEPARATOR = ':';
 const ID_SEPARATOR_INDEX = 3;
 const ID_SEPARATOR_INDEX_AGGREGATE = 5;
-const filterMainClass = 'filter-ad';
 const LISTENER_ADDED_CLASS = 'listenerAdded';
 const MAIN_FEED_SELECTOR = 'main#main';
 const DEBUG_MODE = false;
-
-export const filterIconIdentifier = `filter-icon-zzz`;
-export const filterSvgClass = 'filterSvg';
 
 window.onload = () => {
     observeTitle();
@@ -128,14 +130,7 @@ const insertFilter = () => {
         (
             optionIcon.parentNode!.parentNode!.parentNode!
                 .parentNode as HTMLElement
-        ).insertAdjacentHTML(
-            'beforebegin',
-            filterIconHtml(
-                filterMainClass,
-                filterIconIdentifier,
-                filterSvgClass
-            )
-        );
+        ).insertAdjacentHTML('beforebegin', filterIconHtml());
     });
 
     //insert listener on filter icon
@@ -180,9 +175,6 @@ const handleFilterClick = (eventTarget: HTMLElement) => {
         }
 
         toggleFromStorage(id);
-    } else {
-        // console.log(`target doesn't have att '${filterIconIdentifier}'`);
-        // console.log(e.target);
     }
 };
 

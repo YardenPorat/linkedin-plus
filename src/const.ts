@@ -1,8 +1,19 @@
-export const filterIconHtml = (
-    FILTER_CLASS: string,
-    filterIconIdentifier: string,
-    filterSvgClass: string
-) => `<div class="${FILTER_CLASS}">
+export const filterMainClass = 'filter-ad';
+export const filterIconIdentifier = `filter-icon-zzz`;
+export const filterSvgClass = 'filterSvg';
+
+export const classesToHide = [
+    '.feed-shared-update-v2__update-content-wrapper',
+    '.feed-shared-update-v2__description-wrapper',
+    '.feed-shared-update-v2__content',
+    '.social-details-social-activity',
+    '.Elevation-0dp',
+    '.ad-banner-container',
+    '.feed-shared-document__container',
+    '.feed-shared-showcase', // Assessment badges, Open to work
+];
+
+export const filterIconHtml = () => `<div class="${filterMainClass}">
                     <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" 
                         style="enable-background:new 0 0 512 512;" xml:space="preserve"
                         >
@@ -17,14 +28,3 @@ export const filterIconHtml = (
                             </g>
                         </svg>
                     </div>`;
-
-export const classesToHide = [
-    '.feed-shared-update-v2__update-content-wrapper',
-    '.feed-shared-update-v2__description-wrapper',
-    '.feed-shared-update-v2__content',
-    '.social-details-social-activity',
-    '.Elevation-0dp',
-    '.ad-banner-container',
-    '.feed-shared-document__container',
-    '.feed-shared-showcase', // Assessment badges
-];
