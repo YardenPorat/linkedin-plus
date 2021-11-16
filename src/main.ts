@@ -1,26 +1,20 @@
-import { classesToHide } from './const';
-import { filterIconHtml } from './const';
+import { classesToHide, filterIconHtml } from './const';
 import { observeTitle } from './components/observeTitle';
 import { removeStaticAds } from './components/removeStaticAds';
 import { debounce, getParentEl, getPosition, waitForSelector } from './utils';
-import {
-    isOnMemory,
-    readFromLocalStorage,
-    toggleFromStorage,
-} from './local-storage';
+import { readFromLocalStorage, toggleFromStorage } from './local-storage';
 
 /// for id extraction
-export const ID_SEPARATOR = ':';
-export const ID_SEPARATOR_INDEX = 3;
-export const ID_SEPARATOR_INDEX_AGGREGATE = 5;
+const ID_SEPARATOR = ':';
+const ID_SEPARATOR_INDEX = 3;
+const ID_SEPARATOR_INDEX_AGGREGATE = 5;
+const filterMainClass = 'filter-ad';
+const LISTENER_ADDED_CLASS = 'listenerAdded';
+const MAIN_FEED_SELECTOR = 'main#main';
+const DEBUG_MODE = false;
 
-export const filterMainClass = 'filter-ad';
 export const filterIconIdentifier = `filter-icon-zzz`;
 export const filterSvgClass = 'filterSvg';
-export const LISTENER_ADDED_CLASS = 'listenerAdded';
-export const MAIN_FEED_SELECTOR = 'main#main';
-
-export const DEBUG_MODE = false;
 
 window.onload = () => {
     observeTitle();
@@ -174,9 +168,10 @@ const handleFilterClick = (eventTarget: HTMLElement) => {
         const parent = getParentEl(eventTarget) as Element;
         DEBUG_MODE && console.log(`Got parent element: ${parent}`);
         const id = getId(parent);
-        const idIndexOnMemory = isOnMemory(id);
 
-        if (!idIndexOnMemory) {
+        const storage = readFromLocalStorage();
+
+        if (!storage.has(id)) {
             DEBUG_MODE && console.log(`Ad ID on memory: NO`);
             hideByParentElement(parent);
         } else {
