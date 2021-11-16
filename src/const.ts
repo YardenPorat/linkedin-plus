@@ -26,4 +26,5 @@ export const classesToHide = [
     '.Elevation-0dp',
     '.ad-banner-container',
     '.feed-shared-document__container',
+    '.feed-shared-showcase', // Assessment badges
 ];
