@@ -4,8 +4,7 @@ export const observeTitle = () => {
 
     // create an observer instance
     var titleObserver = new MutationObserver((mutations) => {
-        const titleText = (mutations[0].target as HTMLElement)
-            .innerText as string;
+        const titleText = (mutations[0].target as HTMLElement).innerText as string;
         if (titleText.includes('(')) {
             console.log('page title hidden');
             target.innerText = titleText.slice(4);

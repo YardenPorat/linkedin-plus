@@ -1,3 +1,4 @@
+export const HIDDEN_POST_FLAG = 'hiddenPost';
 export const filterMainClass = 'filter-ad';
 export const filterIconIdentifier = `filter-icon-zzz`;
 export const filterSvgClass = 'filterSvg';
@@ -10,7 +11,8 @@ export const classesToHide = [
     '.Elevation-0dp',
     '.ad-banner-container',
     '.feed-shared-document__container',
-    '.feed-shared-showcase', // Assessment badges, Open to work
+    '.feed-shared-showcase', // Assessment badges, Open to work,
+    '.update-components-showcase', // Open to work
 ];
 
 export const filterIconHtml = () => `<div class="${filterMainClass}">

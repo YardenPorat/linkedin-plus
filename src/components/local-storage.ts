@@ -1,9 +1,8 @@
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
 
-export const readFromLocalStorage = () => {
-    return new Set<string>(
-        JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) ?? '[]')
-    );
+export const readFromLocalStorage = (): Set<string> => {
+    const savedPosts = new Set<string>(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) ?? '[]'));
+    return savedPosts;
 };
 
 export const toggleFromStorage = (id: string) => {
@@ -17,8 +16,5 @@ export const toggleFromStorage = (id: string) => {
         console.log(`'${id}' Removed`);
     }
 
-    localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify(Array.from(storage))
-    );
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(Array.from(storage)));
 };

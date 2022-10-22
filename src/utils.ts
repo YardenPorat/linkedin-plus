@@ -1,7 +1,4 @@
-export const debounce = <T extends (...args: any[]) => any>(
-    callback: T,
-    waitFor: number
-) => {
+export const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
     let timeout: ReturnType<typeof setTimeout>;
     return (...args: Parameters<T>): ReturnType<T> => {
         let result: any;
@@ -33,12 +30,7 @@ export interface IWaitForSelector {
     delay: number;
 }
 
-export const waitForSelector = (
-    selector: string,
-    callback: any,
-    limit = 30,
-    delay = 300
-) => {
+export const waitForSelector = (selector: string, callback: any, limit = 30, delay = 300) => {
     if (limit === 0) return;
     if (document.querySelector(selector)) {
         callback();

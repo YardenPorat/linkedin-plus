@@ -10,6 +10,11 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+                test: /\.js$/,
+                enforce: 'pre',
+                loader: 'source-map-loader',
+            },
         ],
     },
     resolve: {
@@ -17,9 +22,7 @@ module.exports = {
     },
     output: {
         filename: (pathData) => {
-            return pathData.chunk.name === 'background'
-                ? '../[name].js'
-                : '[name].js';
+            return pathData.chunk.name === 'background' ? '../[name].js' : '[name].js';
         },
     },
     devtool: 'cheap-module-source-map',
