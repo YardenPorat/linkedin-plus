@@ -30,6 +30,11 @@ export const addCss = () => {
                   height: 20px;
                   fill: #797979;
               }
+
+              .hiddenPromoted {
+                height: 20px;
+                padding: 5px 10px;
+              }
               </style>`.trim()
     );
 };

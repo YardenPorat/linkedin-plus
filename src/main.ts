@@ -7,6 +7,7 @@ import { log } from './components/logger';
 import { insertFilterIcon } from './components/insert-filter-icon';
 import { hideByParentElement } from './posts/hide-by-parent-el';
 import { HIDDEN_POST_FLAG } from './const';
+import { hidePromotedPosts } from './posts/hide-promoted-posts';
 
 const MAIN_FEED_SELECTOR = 'main#main';
 
@@ -37,7 +38,6 @@ const observeMainFeed = () => {
     const target = document.querySelector(MAIN_FEED_SELECTOR) as HTMLDivElement;
     const mainFeedObserver = new MutationObserver((data) => {
         log('Mutation observed');
-        console.log(data);
         debounceProcessNewPosts();
     });
     const config = { subtree: true, characterData: true, childList: true };
@@ -52,24 +52,6 @@ const processNewPosts = () => {
 };
 
 const debounceProcessNewPosts = debounce(processNewPosts, 400);
-
-const PROMOTED_SELECTORS = [
-    'span.feed-shared-actor__sub-description.t-12.t-normal.t-black--light',
-    'span.feed-shared-actor__description.t-12.t-normal.t-black--light',
-];
-const hidePromotedPosts = () => {
-    //choosing page elements to hide
-
-    'feed-shared-actor__description t-12 t-normal t-black--light';
-    const promotedPosts = Array.from(document.querySelectorAll(PROMOTED_SELECTORS.join(', ')));
-    const arr = promotedPosts.filter((item) => (item as HTMLElement).innerText == 'Promoted');
-
-    arr.forEach((promoted) => {
-        (promoted as HTMLElement).innerText = 'Hidden by LinkedIn Plus';
-        (promoted.parentNode!.parentNode!.parentNode!.parentNode as HTMLElement)!.style.display = 'none';
-    });
-    arr.length && log(`${arr.length} promoted posts hidden`);
-};
 
 const hideSavedPosts = () => {
     const storage = readFromLocalStorage();
