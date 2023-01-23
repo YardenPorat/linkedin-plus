@@ -1,4 +1,4 @@
-import { IWaitForSelector, waitForSelector } from '../utils';
+import { waitForSelector } from '../utils/wait-for-selector';
 
 export const removeStaticAds = () => {
     const selectors = [

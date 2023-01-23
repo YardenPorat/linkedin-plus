@@ -25,5 +25,5 @@ module.exports = {
             return pathData.chunk.name === 'background' ? '../[name].js' : '[name].js';
         },
     },
-    devtool: 'cheap-module-source-map',
+    devtool: 'source-map',
 };

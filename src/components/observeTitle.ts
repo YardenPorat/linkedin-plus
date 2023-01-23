@@ -1,3 +1,5 @@
+import { log } from './logger';
+
 export const observeTitle = () => {
     // select the target node
     const target = document.querySelector('title') as HTMLTitleElement;
@@ -6,7 +8,7 @@ export const observeTitle = () => {
     var titleObserver = new MutationObserver((mutations) => {
         const titleText = (mutations[0].target as HTMLElement).innerText as string;
         if (titleText.includes('(')) {
-            console.log('page title hidden');
+            log('page title hidden');
             target.innerText = titleText.slice(4);
         }
     });

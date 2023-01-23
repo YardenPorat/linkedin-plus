@@ -2,40 +2,12 @@ import { filterIconIdentifier, filterMainClass } from '../const';
 import { hideByParentElement } from '../posts/hide-by-parent-el';
 import { unhidePost } from '../posts/unhide-post';
 import { getParentEl, getPosition } from '../utils';
-import { readFromLocalStorage, toggleFromStorage } from './local-storage';
 import { log } from './logger';
 
 /// for id extraction
 const ID_SEPARATOR = ':';
-const ID_SEPARATOR_INDEX = 3;
 
-export const handleFilterClick = (eventTarget: HTMLElement) => {
-    // to avoid propagation from other elements
-    if (
-        eventTarget!.hasAttribute(filterIconIdentifier) ||
-        eventTarget!.parentElement!.parentElement!.hasAttribute(filterIconIdentifier) || //in case icon inside path was clicked
-        eventTarget!.classList.contains(filterMainClass)
-    ) {
-        const parent = getParentEl(eventTarget) as Element;
-        const ids = getId(parent);
-
-        const storage = readFromLocalStorage();
-
-        for (const id of ids) {
-            if (!storage.has(id)) {
-                log(`Ad ID on memory: NO`);
-                hideByParentElement(parent);
-            } else {
-                log(`Ad ID on memory: YES`);
-                unhidePost(id);
-            }
-
-            toggleFromStorage(id);
-        }
-    }
-};
-
-const getId = (el: Element) => {
+export const getId = (el: Element) => {
     //el = data-id="urn:li:activity...
     const idText = el.getAttribute('data-id') as string;
 

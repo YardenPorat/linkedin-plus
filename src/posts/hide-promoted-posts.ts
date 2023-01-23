@@ -11,7 +11,7 @@ export const hidePromotedPosts = () => {
     //choosing page elements to hide
     const promotedPosts = Array.from(document.querySelectorAll(PROMOTED_SELECTORS.join(', '))) as HTMLElement[];
     logger(`Filtering promoted posts: ${promotedPosts.length} posts`);
-    const arr = promotedPosts.filter((item) => item.innerText.includes('Promoted'));
+    const arr = promotedPosts.filter((el) => el.parentElement!.innerText.includes('Promoted'));
     logger(`total promoted: ${arr.length} posts`);
 
     arr.forEach((promoted) => {
