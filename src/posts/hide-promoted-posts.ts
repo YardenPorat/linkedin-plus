@@ -9,25 +9,26 @@ const PROMOTED_SELECTORS = [
 ];
 export const hidePromotedPosts = () => {
     //choosing page elements to hide
-    const promotedPosts = Array.from(document.querySelectorAll(PROMOTED_SELECTORS.join(', '))) as HTMLElement[];
+    const promotedPosts = Array.from(document.querySelectorAll<HTMLElement>(PROMOTED_SELECTORS.join(', ')));
     logger(`Filtering promoted posts: ${promotedPosts.length} posts`);
     const arr = promotedPosts.filter((el) => el.parentElement!.innerText.includes('Promoted'));
-    logger(`total promoted: ${arr.length} posts`);
+    logger(`Total promoted: ${arr.length} posts`);
 
-    arr.forEach((promoted) => {
+    for (const promoted of arr) {
         const post = promoted.closest('div.feed-shared-update-v2') as HTMLElement;
         if (!post) {
             logger('Did not find post');
-            return;
+            continue;
         }
-        const companyName = post.querySelector('.update-components-actor__title')?.textContent;
+        const companyName = post.querySelector('.update-components-actor__title [aria-hidden="true"]')?.textContent;
         if (companyName) {
-            logger(`Hiding promoted post from ${companyName}`);
+            logger(`Hiding promoted post from '${companyName.trim()}'`);
         } else {
             logger('Did not find company name');
         }
         post.classList.add('hiddenPromoted');
         post.innerText = 'Promoted post hidden by LinkedIn Plus';
-    });
+    }
+
     arr.length && logger(`${arr.length} promoted posts hidden`);
 };
