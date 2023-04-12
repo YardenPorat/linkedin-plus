@@ -17,7 +17,7 @@ export const classesToHide = [
 
 export const filterIconHtml = () => `
     <div class="${filterMainClass}">
-        <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" 
+        <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="filterIconSvg" x="0px" y="0px" viewBox="0 0 512 512" 
           style="enable-background:new 0 0 512 512;" xml:space="preserve">
             <g>
                 <path d="M276,246c-5.52,0-10,4.48-10,10c0,5.52,4.48,10,10,10c5.52,0,10-4.48,10-10C286,250.48,281.52,246,276,246z"/>

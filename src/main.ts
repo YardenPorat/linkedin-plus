@@ -1,13 +1,12 @@
 import { observeTitle } from './components/observeTitle';
 import { removeStaticAds } from './components/removeStaticAds';
-import { debounce, getParentEl, getPosition } from './utils';
 import { addCss } from './components/add-css';
-import { log } from './components/logger';
-import { hidePromotedPosts } from './posts/hide-promoted-posts';
 import { waitForSelector } from './utils/wait-for-selector';
-import { insertFilterIcon } from './components/insert-filter-icon';
 import { filterType, PageFilter } from './pages';
 import { PAGES } from './presets';
+import { getLogger } from './components/logger';
+
+const log = getLogger(['main.ts']);
 
 let pageDriver: PageFilter | undefined;
 
@@ -20,7 +19,7 @@ window.onload = () => {
     }
 };
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request) {
     if (request.message === 'enteredFeed') {
         log('Enter feed from another section in linkedIn');
         init();
@@ -34,11 +33,6 @@ const init = () => {
     pageDriver?.processPage();
 };
 
-// const initJobs = () => {
-//     addCss();
-//     insertFilterIcon('[data-job-id]', handleFilterClick);
-// };
-
 const observePage = () => {
     const target = document.querySelector(PAGES[filterType].firstLoadSelector);
     if (!target) {
@@ -46,7 +40,7 @@ const observePage = () => {
         return;
     }
 
-    const mainFeedObserver = new MutationObserver((data) => {
+    const mainFeedObserver = new MutationObserver(() => {
         log('Mutation observed');
         pageDriver?.processPage();
     });

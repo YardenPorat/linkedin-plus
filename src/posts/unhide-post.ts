@@ -1,5 +1,7 @@
-import { log } from '../components/logger';
+import { getLogger } from '../components/logger';
 import { classesToHide, HIDDEN_POST_FLAG } from '../const';
+
+const log = getLogger(['unhide-post.ts']);
 
 export const unhidePost = (id: string) => {
     // get main parent element

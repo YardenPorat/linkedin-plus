@@ -11,7 +11,7 @@
   },
   "action": {
     "default_icon": "./icons/icon-32.png",
-    "default_popup": "static/popup.html"
+    "default_popup": "popup.html"
   },
   "background": {
     "service_worker": "background.js"
@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.linkedin.com/*"],
-      "js": ["dist/main.js"]
+      "js": ["main.js"]
     }
   ],
   "web_accessible_resources": [{ "resources": ["./static/*"], "matches": ["https://linkedin.com/*"] }],

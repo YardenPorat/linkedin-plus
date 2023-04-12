@@ -1,8 +1,10 @@
 import { filterIconHtml as getFilterIconHtml, filterMainClass } from '../const';
-import { log } from './logger';
+import { getLogger } from './logger';
 
 const LISTENER_ADDED_CLASS = 'listenerAdded';
 const FILTER_ADDED_FLAG = 'filterAdded';
+
+const log = getLogger(['insert-filter-icon.ts']);
 
 /**
  * Insert filter icon in the top right corner of each post

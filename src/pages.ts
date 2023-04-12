@@ -1,11 +1,9 @@
 import { insertFilterIcon } from './components/insert-filter-icon';
-import { log } from './components/logger';
+import { getLogger } from './components/logger';
 import { HIDDEN_POST_FLAG } from './const';
-import { hideByParentElement } from './posts/hide-by-parent-el';
 import { hidePromotedPosts } from './posts/hide-promoted-posts';
-import { unhidePost } from './posts/unhide-post';
 import { PAGES } from './presets';
-import { debounce, getParentEl, getPosition } from './utils';
+import { debounce } from './utils';
 import {
     isClosestElementIdStrategy,
     isHideByHeight,
@@ -13,14 +11,16 @@ import {
     isSiblingElementIdStrategy,
 } from './utils/is-strategy';
 
-export let filterType: keyof typeof PAGES = 'feed';
+export const filterType: keyof typeof PAGES = 'feed';
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
+
+const log = getLogger(['page-filter.ts']);
 
 export class PageFilter {
     static findPageType() {
-        for (const [pageKey, properties] of Object.entries(PAGES)) {
+        for (const pageKey of Object.keys(PAGES)) {
             if (window.location.href.includes(pageKey)) {
-                return new PageFilter(pageKey as keyof typeof PAGES);
+                return new PageFilter(pageKey);
             }
         }
     }
@@ -35,7 +35,8 @@ export class PageFilter {
         insertFilterIcon(selector, (e) => this.handleFilterClick(e), setParentStyles);
     }, 400);
 
-    public async hidePageIds() {
+    public hidePageIds() {
+        // eslint-disable-next-line no-console
         console.group('hidePageIds');
         const storage = this.readFromLocalStorage();
         log(`Filtering saved posts by id: ${storage.size} posts`);
@@ -51,6 +52,7 @@ export class PageFilter {
             log(`ID found. hiding ID:${id}`);
             this.hideElement(el, 'down');
         }
+        // eslint-disable-next-line no-console
         console.groupEnd();
     }
 
@@ -68,7 +70,7 @@ export class PageFilter {
         localStorage.setItem(this.getStorageKey(), JSON.stringify(Array.from(storage)));
     };
 
-    public async handleFilterClick(e: Event) {
+    public handleFilterClick(e: Event) {
         log('Filter icon clicked');
 
         const eventTarget = e.currentTarget as HTMLElement;
@@ -113,7 +115,7 @@ export class PageFilter {
     private hideElement(el: HTMLElement, direction: 'up' | 'down' = 'up') {
         const { hideFromFilterClick } = PAGES[this.pageKey];
 
-        const directionSelector = 'up' ? 'closest' : 'querySelector';
+        const directionSelector = direction ? 'closest' : 'querySelector';
         const parent = el.parentElement![directionSelector]<HTMLElement>(hideFromFilterClick.fromParentSelector);
         if (!parent) {
             throw new Error(`Could not find parent element to hide from`);
@@ -153,9 +155,7 @@ export class PageFilter {
             throw new Error(`hideOrUnhideChildrenByClass should only be called with HideChildrenByClass strategy`);
         }
 
-        const childrenToHide = parent.querySelectorAll(
-            hideFromFilterClick.classesToHide.toString()
-        ) as NodeListOf<HTMLElement>;
+        const childrenToHide = parent.querySelectorAll<HTMLElement>(hideFromFilterClick.classesToHide.toString());
 
         const display = isHide ? 'none' : '';
         childrenToHide.forEach((child) => {

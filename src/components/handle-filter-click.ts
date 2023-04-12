@@ -1,8 +1,7 @@
-import { filterIconIdentifier, filterMainClass } from '../const';
-import { hideByParentElement } from '../posts/hide-by-parent-el';
-import { unhidePost } from '../posts/unhide-post';
-import { getParentEl, getPosition } from '../utils';
-import { log } from './logger';
+import { getPosition } from '../utils';
+import { getLogger } from './logger';
+
+const log = getLogger([__filename]);
 
 /// for id extraction
 const ID_SEPARATOR = ':';

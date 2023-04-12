@@ -1,7 +1,10 @@
-const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: { main: './src/main.ts', background: './src/background.ts' },
+    output: {
+        filename: '[name].js',
+    },
     mode: 'development',
     module: {
         rules: [
@@ -20,10 +23,11 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js'],
     },
-    output: {
-        filename: (pathData) => {
-            return pathData.chunk.name === 'background' ? '../[name].js' : '[name].js';
-        },
-    },
+
+    plugins: [
+        new CopyWebpackPlugin({
+            patterns: [{ from: 'static' }],
+        }),
+    ],
     devtool: 'source-map',
 };

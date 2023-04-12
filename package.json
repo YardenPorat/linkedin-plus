@@ -9,14 +9,20 @@
     "prebuild": "npm run clean",
     "build": "webpack",
     "clean": "rimraf \"./dist\" \"./background*.js*\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "dependencies": {
+    "copy-webpack-plugin": "^11.0.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.228",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
     "rimraf": "^5.0.0",
     "source-map-loader": "^4.0.1",
     "webpack": "^5.78.0",
