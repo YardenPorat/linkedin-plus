@@ -8,32 +8,22 @@ import { getLogger } from './components/logger';
 
 const log = getLogger(['main.ts']);
 
-let pageDriver: PageFilter | undefined;
-
-window.onload = () => {
-    observeTitle();
-
-    pageDriver = PageFilter.findPageType();
-    if (pageDriver) {
-        init();
-    }
-};
-
+window.onload = onLoad;
 chrome.runtime.onMessage.addListener(function (request) {
     if (request.message === 'enteredFeed') {
         log('Enter feed from another section in linkedIn');
-        init();
+        onLoad();
     }
 });
 
-const init = () => {
+const init = (pageDriver: PageFilter) => {
     addCss();
-    waitForSelector(PAGES[filterType].firstLoadSelector, observePage);
+    waitForSelector(PAGES[filterType].firstLoadSelector, () => observePage(pageDriver));
     removeStaticAds();
-    pageDriver?.processPage();
+    pageDriver.processPage();
 };
 
-const observePage = () => {
+const observePage = (pageDriver: PageFilter) => {
     const target = document.querySelector(PAGES[filterType].firstLoadSelector);
     if (!target) {
         log('Observable target not found');
@@ -42,8 +32,19 @@ const observePage = () => {
 
     const mainFeedObserver = new MutationObserver(() => {
         log('Mutation observed');
-        pageDriver?.processPage();
+        pageDriver.processPage();
     });
     const config = { subtree: true, characterData: true, childList: true };
     mainFeedObserver.observe(target, config);
 };
+
+function onLoad() {
+    observeTitle();
+
+    const pageDriver = PageFilter.findPageType();
+    if (pageDriver) {
+        init(pageDriver);
+    } else {
+        log('Page driver not found');
+    }
+}
