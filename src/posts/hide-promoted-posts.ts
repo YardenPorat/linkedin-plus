@@ -1,4 +1,5 @@
 import { getLogger } from '../components/logger';
+import { PROMOTED_POST_HIDDEN } from '../const';
 
 const log = getLogger(['hide-promoted-posts.ts']);
 
@@ -27,7 +28,7 @@ export const hidePromotedPosts = () => {
             log('Did not find company name');
         }
         post.classList.add('hiddenPromoted');
-        post.innerText = 'Promoted post hidden by LinkedIn Plus';
+        post.innerText = PROMOTED_POST_HIDDEN;
     }
 
     arr.length && log(`${arr.length} promoted posts hidden`);

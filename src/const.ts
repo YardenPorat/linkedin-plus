@@ -1,3 +1,8 @@
+export const LINKED_IN_PLUS = 'LinkedIn Plus';
+export const PROMOTED_POST_HIDDEN = 'Promoted post hidden by ' + LINKED_IN_PLUS;
+
+export const UP = 'up';
+export const DOWN = 'down';
 export const HIDDEN_POST_FLAG = 'hiddenPost';
 export const filterMainClass = 'filter-ad';
 export const filterIconIdentifier = `filter-icon-zzz`;

@@ -1,6 +1,6 @@
 import { insertFilterIcon } from './components/insert-filter-icon';
 import { getLogger } from './components/logger';
-import { HIDDEN_POST_FLAG } from './const';
+import { HIDDEN_POST_FLAG, UP, DOWN } from './const';
 import { hidePromotedPosts } from './posts/hide-promoted-posts';
 import { PAGES } from './presets';
 import { debounce } from './utils';
@@ -14,7 +14,7 @@ import {
 export const filterType: keyof typeof PAGES = 'feed';
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
 
-const log = getLogger(['page-filter.ts']);
+const log = getLogger(['pages.ts']);
 
 export class PageFilter {
     static findPageType() {
@@ -36,8 +36,6 @@ export class PageFilter {
     }, 400);
 
     public hidePageIds() {
-        // eslint-disable-next-line no-console
-        console.group('hidePageIds');
         const storage = this.readFromLocalStorage();
         log(`Filtering saved posts by id: ${storage.size} posts`);
 
@@ -52,8 +50,6 @@ export class PageFilter {
             log(`ID found. hiding ID:${id}`);
             this.hideElement(el, 'down');
         }
-        // eslint-disable-next-line no-console
-        console.groupEnd();
     }
 
     public toggleFromStorage = (id: string) => {
@@ -82,10 +78,8 @@ export class PageFilter {
 
         for (const id of ids) {
             if (!storage.has(id)) {
-                log(`Ad ID on memory: NO`);
                 this.hideElement(eventTarget);
             } else {
-                log(`Ad ID on memory: YES`);
                 this.unhidePost(eventTarget);
             }
 
@@ -112,12 +106,22 @@ export class PageFilter {
         return parent;
     }
 
-    private hideElement(el: HTMLElement, direction: 'up' | 'down' = 'up') {
+    private hideElement(el: HTMLElement, direction: typeof UP | typeof DOWN = UP) {
         const { hideFromFilterClick } = PAGES[this.pageKey];
 
-        const directionSelector = direction ? 'closest' : 'querySelector';
+        const directionSelector = direction === UP ? 'closest' : 'querySelector';
         const parent = el.parentElement![directionSelector]<HTMLElement>(hideFromFilterClick.fromParentSelector);
         if (!parent) {
+            // eslint-disable-next-line no-console
+            // eslint-disable-next-line no-console
+            console.error(
+                'Selector: ',
+                hideFromFilterClick.fromParentSelector,
+                '\nDirection: ',
+                direction,
+                '\nElement: ',
+                el
+            );
             throw new Error(`Could not find parent element to hide from`);
         }
 

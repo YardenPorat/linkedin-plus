@@ -42,8 +42,8 @@ export interface FilterPageData {
 
 export const PAGES: Record<string, FilterPageData> = {
     jobs: {
-        hrefIncludes: 'linkedin.com/jobs/search',
         firstLoadSelector: '.jobs-search-results-list',
+        hrefIncludes: 'linkedin.com/jobs/search',
         idContainerSelector: 'div[data-job-id="${id}"]',
         filterIconContainer: {
             selector: '[data-job-id]',
@@ -62,8 +62,8 @@ export const PAGES: Record<string, FilterPageData> = {
     },
 
     feed: {
+        firstLoadSelector: 'main[aria-label="Main Feed"]',
         hrefIncludes: 'linkedin.com/feed',
-        firstLoadSelector: 'main#main',
         idContainerSelector: '[data-id="urn:li:activity:${id}"]',
         filterIconContainer: { selector: '.feed-shared-control-menu' },
         elementWithId: {
