@@ -4,7 +4,7 @@ export const PROMOTED_POST_HIDDEN = 'Promoted post hidden by ' + LINKED_IN_PLUS;
 export const UP = 'up';
 export const DOWN = 'down';
 export const HIDDEN_POST_FLAG = 'hiddenPost';
-export const filterMainClass = 'filter-ad';
+export const filterIconContainer = 'filter-ad';
 export const filterIconIdentifier = `filter-icon-zzz`;
 export const filterSvgClass = 'filterSvg';
 
@@ -21,7 +21,7 @@ export const classesToHide = [
 ];
 
 export const filterIconHtml = () => `
-    <div class="${filterMainClass}">
+    <div class="${filterIconContainer}">
         <svg ${filterIconIdentifier} class="${filterSvgClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="filterIconSvg" x="0px" y="0px" viewBox="0 0 512 512" 
           style="enable-background:new 0 0 512 512;" xml:space="preserve">
             <g>

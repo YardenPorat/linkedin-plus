@@ -1,4 +1,4 @@
-import { filterIconHtml as getFilterIconHtml, filterMainClass } from '../const';
+import { filterIconHtml as getFilterIconHtml, filterIconContainer } from '../const';
 import { getLogger } from './logger';
 
 const LISTENER_ADDED_CLASS = 'listenerAdded';
@@ -34,7 +34,7 @@ export const insertFilterIcon = (
 
     //insert listener on filter icon
     const filterIcons = Array.from<HTMLElement>(
-        document.querySelectorAll(`.${filterMainClass}:not(.${LISTENER_ADDED_CLASS})`)
+        document.querySelectorAll(`.${filterIconContainer}:not(.${LISTENER_ADDED_CLASS})`)
     );
     filterIcons.forEach((filterIcon) => {
         filterIcon.classList.add(LISTENER_ADDED_CLASS);
