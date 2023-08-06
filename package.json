@@ -8,7 +8,7 @@
     "watch": "webpack -w",
     "prebuild": "npm run clean",
     "build": "webpack",
-    "clean": "rimraf \"./dist\" \"./background*.js*\"",
+    "clean": "rimraf dist ./background*.js*",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },
