@@ -4,10 +4,10 @@ export const addCss = () => {
     document.head.insertAdjacentHTML(
         'beforeend',
         `<style>
-            .scaffold-layout__aside {
+            #voyager-feed .scaffold-layout__aside {
                 display: none;
             }
-            .scaffold-layout__main {
+            #voyager-feed .scaffold-layout__main {
                 grid-column: 2/4;
             }
     
