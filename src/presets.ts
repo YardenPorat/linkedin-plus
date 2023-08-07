@@ -34,7 +34,7 @@ export interface FilterPageData {
     idContainerSelector: string;
     filterIconContainer: {
         selector: string;
-        setParentStyles?: { [key: string]: string };
+        css?: string;
     };
     elementWithId: ElementWithIdStrategy;
     hideFromFilterClick: HideStrategy;
@@ -47,6 +47,7 @@ export const PAGES: Record<string, FilterPageData> = {
         idContainerSelector: 'div[data-job-id="${id}"]',
         filterIconContainer: {
             selector: '[data-job-id]',
+            css: 'right: 25px',
         },
         elementWithId: {
             strategy: 'sibling',
@@ -65,7 +66,7 @@ export const PAGES: Record<string, FilterPageData> = {
         firstLoadSelector: 'main[aria-label="Main Feed"]',
         hrefIncludes: 'linkedin.com/feed',
         idContainerSelector: '[data-id="urn:li:activity:${id}"]',
-        filterIconContainer: { selector: '.feed-shared-control-menu' },
+        filterIconContainer: { selector: '.feed-shared-control-menu', css: 'right: 75px' },
         elementWithId: {
             strategy: 'closest',
             selector: '[data-id]',

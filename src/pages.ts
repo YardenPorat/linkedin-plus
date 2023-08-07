@@ -1,6 +1,8 @@
+import { addCss } from './components/add-css';
 import { insertFilterIcon } from './components/insert-filter-icon';
 import { getLogger } from './components/logger';
-import { HIDDEN_POST_FLAG, UP, DOWN } from './const';
+import { removeStaticAds } from './components/removeStaticAds';
+import { HIDDEN_POST_FLAG, UP, DOWN, PROMOTED_POST_HIDDEN } from './const';
 import { hidePromotedPosts } from './posts/hide-promoted-posts';
 import { PAGES } from './presets';
 import { debounce } from './utils';
@@ -10,6 +12,7 @@ import {
     isHideChildrenByClass,
     isSiblingElementIdStrategy,
 } from './utils/is-strategy';
+import { waitForSelector } from './utils/wait-for-selector';
 
 export const filterType: keyof typeof PAGES = 'feed';
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
@@ -25,14 +28,20 @@ export class PageFilter {
         }
     }
 
-    constructor(private pageKey: keyof typeof PAGES) {}
+    constructor(public pageKey: keyof typeof PAGES) {
+        addCss(PAGES[this.pageKey].filterIconContainer.css);
+        waitForSelector(PAGES[this.pageKey].firstLoadSelector);
+        removeStaticAds();
+        this.processPage();
+        this.observePage();
+    }
 
     public processPage = debounce(() => {
-        const { selector, setParentStyles } = PAGES[this.pageKey].filterIconContainer;
+        const { selector } = PAGES[this.pageKey].filterIconContainer;
         log('processPage');
         this.hidePageIds();
         hidePromotedPosts();
-        insertFilterIcon(selector, (e) => this.handleFilterClick(e), setParentStyles);
+        insertFilterIcon(selector, (e) => this.handleFilterClick(e));
     }, 400);
 
     public hidePageIds() {
@@ -86,6 +95,35 @@ export class PageFilter {
             this.toggleFromStorage(id);
         }
     }
+
+    public observePage = () => {
+        const target = document.querySelector(PAGES[this.pageKey].firstLoadSelector);
+        if (!target) {
+            log(`Observable target not found (${PAGES[this.pageKey].firstLoadSelector})`);
+            return;
+        }
+
+        const mainFeedObserver = new MutationObserver((mutations) => {
+            let addedNodes = 0;
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node instanceof HTMLElement && node.textContent !== PROMOTED_POST_HIDDEN) {
+                        addedNodes++;
+                        break;
+                    }
+                }
+
+                if (addedNodes > 0) {
+                    log('Mutation observed');
+                    this.processPage();
+                    break;
+                }
+            }
+        });
+        const config = { subtree: true, characterData: true, childList: true };
+        mainFeedObserver.observe(target, config);
+        log('Observer started');
+    };
 
     private getElementWithId(el: HTMLElement) {
         const { elementWithId } = PAGES[this.pageKey];

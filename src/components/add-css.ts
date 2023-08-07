@@ -1,6 +1,6 @@
 import { filterIconContainer, filterSvgClass } from '../const';
 
-export const addCss = () => {
+export const addCss = (filterIconCss?: string) => {
     document.head.insertAdjacentHTML(
         'beforeend',
         `<style>
@@ -23,6 +23,7 @@ export const addCss = () => {
                 justify-content: center;
                 height: 3.2rem;
                 width: 3.2rem;
+                ${filterIconCss || ''}
               }
           
               .${filterIconContainer}:hover {
