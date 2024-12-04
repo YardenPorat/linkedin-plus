@@ -1,6 +1,7 @@
 import { addCss } from './components/add-css';
 import { insertFilterIcon } from './components/insert-filter-icon';
-import { getLogger } from './components/logger';
+import { log } from './components/logger';
+import { observeTitle } from './components/observeTitle';
 import { removeStaticAds } from './components/removeStaticAds';
 import { HIDDEN_POST_FLAG, UP, DOWN, PROMOTED_POST_HIDDEN } from './const';
 import { hidePromotedPosts } from './posts/hide-promoted-posts';
@@ -17,10 +18,8 @@ import { waitForSelector } from './utils/wait-for-selector';
 export const filterType: keyof typeof PAGES = 'feed';
 const LOCAL_STORAGE_KEY = 'linkedin-plus';
 
-const log = getLogger(['pages.ts']);
-
 export class PageFilter {
-    static findPageType() {
+    static init() {
         for (const pageKey of Object.keys(PAGES)) {
             if (window.location.href.includes(pageKey)) {
                 return new PageFilter(pageKey);
@@ -30,15 +29,24 @@ export class PageFilter {
 
     constructor(public pageKey: keyof typeof PAGES) {
         addCss(PAGES[this.pageKey].filterIconContainer.css);
-        waitForSelector(PAGES[this.pageKey].firstLoadSelector);
+        observeTitle();
+
+        waitForSelector(PAGES[this.pageKey].firstLoadSelector)
+            .then(this.init)
+            .catch((error) => {
+                log.error(error);
+            });
+    }
+
+    public init = () => {
         removeStaticAds();
         this.processPage();
         this.observePage();
-    }
+    };
 
     public processPage = debounce(() => {
         const { selector } = PAGES[this.pageKey].filterIconContainer;
-        log('processPage');
+        log.message('processPage');
         this.hidePageIds();
         hidePromotedPosts();
         insertFilterIcon(selector, (e) => this.handleFilterClick(e));
@@ -46,7 +54,7 @@ export class PageFilter {
 
     public hidePageIds() {
         const storage = this.readFromLocalStorage();
-        log(`Filtering saved posts by id: ${storage.size} posts`);
+        log.message(`Filtering saved posts by id: ${storage.size} posts`);
 
         for (const id of Array.from(storage)) {
             // :not(.hiddenPost) - in order not to double hide posts
@@ -56,7 +64,7 @@ export class PageFilter {
                 continue;
             }
 
-            log(`ID found. hiding ID:${id}`);
+            log.message(`ID found. hiding ID:${id}`);
             this.hideElement(el, 'down');
         }
     }
@@ -66,17 +74,17 @@ export class PageFilter {
 
         if (!storage.has(id)) {
             storage.add(id);
-            log(`'${id}' Added`);
+            log.message(`'${id}' Added`);
         } else {
             storage.delete(id);
-            log(`'${id}' Removed`);
+            log.message(`'${id}' Removed`);
         }
 
         localStorage.setItem(this.getStorageKey(), JSON.stringify(Array.from(storage)));
     };
 
     public handleFilterClick(e: Event) {
-        log('Filter icon clicked');
+        log.message('Filter icon clicked');
 
         const eventTarget = e.currentTarget as HTMLElement;
 
@@ -99,7 +107,7 @@ export class PageFilter {
     public observePage = () => {
         const target = document.querySelector(PAGES[this.pageKey].firstLoadSelector);
         if (!target) {
-            log(`Observable target not found (${PAGES[this.pageKey].firstLoadSelector})`);
+            log.error(`Observable target not found (${PAGES[this.pageKey].firstLoadSelector})`);
             return;
         }
 
@@ -114,7 +122,6 @@ export class PageFilter {
                 }
 
                 if (addedNodes > 0) {
-                    log('Mutation observed');
                     this.processPage();
                     break;
                 }
@@ -122,7 +129,7 @@ export class PageFilter {
         });
         const config = { subtree: true, characterData: true, childList: true };
         mainFeedObserver.observe(target, config);
-        log('Observer started');
+        log.message('Observer started');
     };
 
     private getElementWithId(el: HTMLElement) {
@@ -136,7 +143,7 @@ export class PageFilter {
         }
 
         if (!parent) {
-            log('Selector: ', elementWithId.selector);
+            log.message(`Selector: "${elementWithId.selector}"`);
             throw new Error(`Did not find parent element to hide.
             Selector: ${elementWithId.selector}`);
         }
@@ -212,14 +219,14 @@ export class PageFilter {
     private getIdFromElement = (el: Element) => {
         const idText = el.getAttribute(PAGES[this.pageKey].elementWithId.idAttribute);
         if (!idText) {
-            log(`ERROR. trying to get id from element without id`);
+            log.message(`ERROR. trying to get id from element without id`);
             return [];
         }
 
         const { separator, multipleIdIdentifier } = PAGES[this.pageKey].elementWithId;
         let id;
         if (multipleIdIdentifier && idText.includes(multipleIdIdentifier)) {
-            log('id is aggregated');
+            log.message('id is aggregated');
 
             const regex = new RegExp(/(\d+)/g);
             const matches = idText.match(regex);
@@ -233,7 +240,7 @@ export class PageFilter {
             id = [splittedByColon[splittedByColon.length - 1]];
         }
 
-        log(`ID returned from getId: ${id.join(', ')}`);
+        log.message(`ID returned from getId: ${id.join(', ')}`);
         return id;
     };
 

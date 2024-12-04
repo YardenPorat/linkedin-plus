@@ -1,6 +1,4 @@
-import { getLogger } from './components/logger';
-
-const log = getLogger(['background.ts']);
+import { log } from './components/logger';
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
     if (changeInfo.url && changeInfo.url.includes('linkedin.com/feed')) {
@@ -10,7 +8,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
                 url: changeInfo.url,
             })
             .catch((e) => {
-                log(e.message);
+                log.error(e.message);
             });
     }
 });

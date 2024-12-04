@@ -81,6 +81,8 @@ export const PAGES: Record<string, FilterPageData> = {
                 '.feed-shared-update-v2__update-content-wrapper',
                 '.feed-shared-update-v2__description-wrapper',
                 '.feed-shared-update-v2__content',
+                '.update-v2-social-activity',
+                '.artdeco-carousel__content',
                 '.social-details-social-activity',
                 '.Elevation-0dp',
                 '.ad-banner-container',

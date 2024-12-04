@@ -4,13 +4,13 @@ export const addCss = (filterIconCss?: string) => {
     document.head.insertAdjacentHTML(
         'beforeend',
         `<style>
-            #voyager-feed .scaffold-layout__aside {
-                display: none;
-            }
-            #voyager-feed .scaffold-layout__main {
-                grid-column: 2/4;
-            }
-    
+          :root {
+            --scaffold-layout-aside-width: minmax(0, 100px) !important;
+          }
+          #voyager-feed .scaffold-layout__aside {
+            display: none;
+          }
+                
             .${filterIconContainer} {
                 border-radius: 50px;
                 position: absolute;

@@ -1,10 +1,8 @@
 import { filterIconHtml as getFilterIconHtml, filterIconContainer } from '../const';
-import { getLogger } from './logger';
+import { log } from './logger';
 
 const LISTENER_ADDED_CLASS = 'listenerAdded';
 const FILTER_ADDED_FLAG = 'filterAdded';
-
-const log = getLogger(['insert-filter-icon.ts']);
 
 /**
  * Insert filter icon in the top right corner of each post
@@ -17,9 +15,9 @@ export const insertFilterIcon = (
     const iconContainers = Array.from(
         document.querySelectorAll<HTMLElement>(`${containerSelector}:not(.${FILTER_ADDED_FLAG})`)
     );
-    log(`Found ${iconContainers.length} containers for filter icon - inserting icon`);
+    log.message(`Found ${iconContainers.length} containers for filter icon - inserting icon`);
     if (!iconContainers.length) {
-        log('Selector: ' + containerSelector);
+        log.error('Selector: ' + containerSelector);
     }
 
     iconContainers.forEach((iconContainer) => {

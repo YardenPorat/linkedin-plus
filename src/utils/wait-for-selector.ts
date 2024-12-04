@@ -1,19 +1,20 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-export interface IWaitForSelector {
-    selector: string;
-    callback: (e: Event) => void;
-    limit: number;
-    delay: number;
-}
+const DEFAULT_TIMEOUT = 15000;
 
-export const waitForSelector = (selector: string, callback = noop, limit = 30, delay = 300) => {
-    if (limit === 0) return;
-    if (document.querySelector(selector)) {
-        callback();
-    } else {
-        setTimeout(() => {
-            waitForSelector(selector, callback, limit--);
-        }, delay);
-    }
-};
+export async function waitForSelector(selector: string, timeout = DEFAULT_TIMEOUT): Promise<Element> {
+    const startTime = Date.now();
+
+    return new Promise<Element>((resolve, reject) => {
+        function checkSelector() {
+            const element = document.querySelector(selector);
+            if (element) {
+                resolve(element);
+            } else if (Date.now() - startTime >= timeout) {
+                reject(new Error(`Timeout exceeded while waiting for selector: ${selector}`));
+            } else {
+                requestAnimationFrame(checkSelector);
+            }
+        }
+
+        checkSelector();
+    });
+}

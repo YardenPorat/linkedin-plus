@@ -1,6 +1,4 @@
-import { getLogger } from './logger';
-
-const log = getLogger(['observeTitle.ts']);
+import { log } from './logger';
 
 export const observeTitle = () => {
     // select the target node
@@ -10,7 +8,7 @@ export const observeTitle = () => {
     const titleObserver = new MutationObserver((mutations) => {
         const titleText = (mutations[0].target as HTMLTitleElement).innerText;
         if (titleText.includes('(')) {
-            log('page title hidden');
+            log.message('page title hidden');
             target.innerText = titleText.slice(4);
         }
     });
