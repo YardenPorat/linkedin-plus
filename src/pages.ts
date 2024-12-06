@@ -158,7 +158,6 @@ export class PageFilter {
         const parent = el.parentElement![directionSelector]<HTMLElement>(hideFromFilterClick.fromParentSelector);
         if (!parent) {
             // eslint-disable-next-line no-console
-            // eslint-disable-next-line no-console
             console.error(
                 'Selector: ',
                 hideFromFilterClick.fromParentSelector,
